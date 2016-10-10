@@ -1,0 +1,13 @@
+<!-- "Welcome <%=session[:name]%> to tic-tac-toe. You are player 1." -->
+<p><%=welcome_message%></p>
+
+"Player 2, choose your AI" <br><br/>
+<form action="choose_ai" method="post">
+	<select name = "player_2">
+		<option value = "random_ai">RandomAI </option>
+		<option value = "human_ai">HumanAI </option>
+		<input type = "submit">
+	</select>
+</form>
+
+
