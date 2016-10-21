@@ -28,7 +28,7 @@ post "/choose_ai" do
   session[:player_1] = player_1
   player_2 = params[:player_2]
 
-    if player_2 == "human"
+    if player_2 == "human_ai"
     session[:p2] = Human.new("O")
       erb :opponent_name, :locals => {:board => session[:board].board_positions}
     else player_2 == "random_ai"
@@ -42,15 +42,16 @@ end
 
 post "/opponent_name" do
   session[:opponent_name] = params[:opponent_name]
+  redirect "/play_game"
 end
 
 get "/play_game" do
-  erb :board
+  erb :board, :locals => {:board => session[:board].board_positions}
 end
 
 post "/play_game" do
   space = params[:space].to_i
-  session[:board].update_board(space, session[:current_player].marker)
+  session[:board].update_board((space - 1), session[:current_player].marker)
   if session[:board].game_won?(session[:current_player].marker) == true
     redirect "/win"
   elsif 
