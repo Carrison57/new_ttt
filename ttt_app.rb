@@ -2,38 +2,46 @@ require "sinatra"
 require_relative "random_ai.rb"
 require_relative "human.rb"
 require_relative "new_tic_tac.rb"
+require 'sinatra/reloader' if development?
 
 enable :sessions
 
 get "/" do
-  erb :welcome
+  session[:board] = Board.new
+  erb :welcome, :locals => {:board => session[:board].board_positions}
 end
 
 post "/name" do
   session[:name] = params[:user_name].capitalize
-  redirect '/choose_ai?user_name=' + session[:name]
+  # session[:board] = Board.new
+  # session[:board_positions] = session[:board].board_positions
+  # redirect '/choose_ai?board_positions?user_name=' + session[:name]
+  erb :choose_ai, :locals => {:user_name => session[:name], :board => session[:board].board_positions} 
 end
 
-get "/choose_ai" do
-  erb :choose_ai, :locals => {:welcome_message => "Welcome #{session[:name]} to tic-tac-toe. You are player 1."}
-end
+# get "/choose_ai" do
+#   erb :choose_ai
+# end
 
 post "/choose_ai" do 
-  session[:board] = Board.new
-  # board = session[:board]
   player_1 = Human.new("X")
   session[:player_1] = player_1
   player_2 = params[:player_2]
 
-  if player_2 == "random_ai"
-    session[:p2] = RandomAI.new("O")
-  else player_2 == "human"
+    if player_2 == "human"
     session[:p2] = Human.new("O")
-  end
-  # redirect "/play_game"
+      erb :opponent_name, :locals => {:board => session[:board].board_positions}
+    else player_2 == "random_ai"
+    session[:p2] = RandomAI.new("O")
+      # redirect "/play_game?board=" + session[:board].to_s
+    end
 
-  session[:current_player] = session[:player_1]
-  erb :board, :locals => {:board => session[:board].ttt_board, :current_player => session[:current_player], :player_1 => session[:player_1], :player_2 => session[:p2]}
+  # session[:current_player] = session[:player_1]
+  # erb :board, :locals => {:board => session[:board].ttt_board, :current_player => session[:current_player], :player_1 => session[:player_1], :player_2 => session[:p2]}
+end
+
+post "/opponent_name" do
+  session[:opponent_name] = params[:opponent_name]
 end
 
 get "/play_game" do
@@ -57,6 +65,30 @@ post "/play_game" do
     erb :board, :locals => {:board => session[:board].ttt_board, :current_player => session[:current_player], :player_1 => session[:player_1], :player_2 => session[:p2]}
   end
 
+  # space = params[:space].to_i
+  # session[:board].update_board(space, session[:current_player].marker)
+  # if session[:board].game_won?(session[:current_player].marker) == true
+  #   redirect "/win"
+  # elsif 
+  #   session[:board].game_ends_in_tie? == true
+  #   redirect "/tie"
+  # else
+  #   if session[:current_player].marker == "X"
+  #     session[:current_player] = session[:p2].get_move(session[:board].update_board(space, session[:current_player].marker))
+  #   else
+  #     session[:current_player] = session[:player_1]
+  #   end
+  #   erb :board, :locals => {:board => session[:board].ttt_board, :current_player => session[:current_player], :player_1 => session[:player_1], :player_2 => session[:p2]}
+  # end
+
+end
+
+get "/win" do 
+  "You won the game!"
+end
+
+get "/tie" do
+  "You tied the game"
 end
 
 

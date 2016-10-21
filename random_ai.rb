@@ -19,11 +19,7 @@ class RandomAI
 		end
 		move.sample
 	end
-		
 
-	# def random_space(board)
-	# 	board.sample(" ")
-	# end
 
 	def array
 		#create an array of

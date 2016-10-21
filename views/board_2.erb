@@ -1,5 +1,12 @@
 <center><p>Play the game!</p></center>
-<center><p><%=session[:name]%>, you are "X". Player 2, you are "O".</p></center>
+<center><p><%=session[:name]%>, you are "X". Player 2, what is your name?.</p></center>
+  
+<center><form action = "play_game" method = "post"> 
+  <input type = "text" name = "player_2">
+  <input type = "submit">
+</form>
+</center>
+
 <center><p><%=session[:current_player].marker%>, pick a place to play.</p></center>
 
 
@@ -9,9 +16,9 @@
 </form>
 </center>
 
-<!-- <br></br> -->
+<br></br>
 
-<!-- <table id='board'>
+<table id='board'>
    <tr>
        <td id='top-left'><%= board[0] %></td>
        <td id='top-center'><%= board[1] %></td>
@@ -27,4 +34,4 @@
        <td id='bottom-center'><%= board[7] %></td>
        <td id='bottom-right'><%= board[8] %></td>
    </tr>
-</table> -->
+</table>
