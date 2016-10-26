@@ -1,0 +1,9 @@
+<center><p>Play the game!</p></center>
+<center><p><%=session[:current_player_name]%>, you are "X". <%=session[:player_2]%>, you are "O".</p></center>
+<center><p><%=session[:current_player_name]%>, pick a place to play.</p></center>
+
+<center><form action = "play_game" method = "post"> 
+  <input type = "number" name = "space">
+  <input type = "submit">
+</form>
+</center>

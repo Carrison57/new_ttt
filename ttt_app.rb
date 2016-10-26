@@ -13,6 +13,7 @@ end
 
 post "/name" do
   session[:name] = params[:user_name].capitalize
+  session[:current_player_name] = session[:name]
   # session[:board] = Board.new
   # session[:board_positions] = session[:board].board_positions
   # redirect '/choose_ai?board_positions?user_name=' + session[:name]
@@ -26,6 +27,7 @@ end
 post "/choose_ai" do 
   player_1 = Human.new("X")
   session[:player_1] = player_1
+  session[:current_player] = session[:player_1]
   player_2 = params[:player_2]
 
     if player_2 == "human_ai"
@@ -33,6 +35,9 @@ post "/choose_ai" do
       erb :opponent_name, :locals => {:board => session[:board].board_positions}
     else player_2 == "random_ai"
     session[:p2] = RandomAI.new("O")
+    session[:player_2] = "Random AI"
+
+    redirect "/get_move"
       # redirect "/play_game?board=" + session[:board].to_s
     end
 
@@ -41,8 +46,20 @@ post "/choose_ai" do
 end
 
 post "/opponent_name" do
-  session[:opponent_name] = params[:opponent_name]
+  session[:opponent_name] = params[:opponent_name].capitalize
   redirect "/play_game"
+end
+
+get '/get_move' do
+  move = session[:current_player].get_move(session[:board].ttt_board)
+
+  if move == "NO"
+    erb :get_move, :locals => { :current_player => session[:current_player], :current_player_name => session[:current_player_name], :player_2 => session[:player_2], :board => session[:board].board_positions }
+  elsif session[:board].valid_space?(move)
+    redirect '/play_game?move=' + move.to_s 
+  else
+    redirect '/get_move'
+  end
 end
 
 get "/play_game" do
@@ -65,22 +82,6 @@ post "/play_game" do
     end
     erb :board, :locals => {:board => session[:board].ttt_board, :current_player => session[:current_player], :player_1 => session[:player_1], :player_2 => session[:p2]}
   end
-
-  # space = params[:space].to_i
-  # session[:board].update_board(space, session[:current_player].marker)
-  # if session[:board].game_won?(session[:current_player].marker) == true
-  #   redirect "/win"
-  # elsif 
-  #   session[:board].game_ends_in_tie? == true
-  #   redirect "/tie"
-  # else
-  #   if session[:current_player].marker == "X"
-  #     session[:current_player] = session[:p2].get_move(session[:board].update_board(space, session[:current_player].marker))
-  #   else
-  #     session[:current_player] = session[:player_1]
-  #   end
-  #   erb :board, :locals => {:board => session[:board].ttt_board, :current_player => session[:current_player], :player_1 => session[:player_1], :player_2 => session[:p2]}
-  # end
 
 end
 
